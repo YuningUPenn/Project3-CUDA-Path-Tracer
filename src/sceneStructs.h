@@ -57,6 +57,10 @@ struct Camera
     glm::vec3 right;
     glm::vec2 fov;
     glm::vec2 pixelLength;
+
+    // Physically-based depth-of-field
+    float lensRadius;
+    float focalDistance;
 };
 
 struct RenderState
@@ -72,6 +76,7 @@ struct PathSegment
 {
     Ray ray;
     glm::vec3 color;
+    glm::vec3 throughput;
     int pixelIndex;
     int remainingBounces;
 };

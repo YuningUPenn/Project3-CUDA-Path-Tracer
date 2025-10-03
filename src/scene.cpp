@@ -47,6 +47,7 @@ void Scene::loadFromJSON(const std::string& jsonName)
         {
             const auto& col = p["RGB"];
             newMaterial.color = glm::vec3(col[0], col[1], col[2]);
+            newMaterial.hasReflective = 0.0f; // Deal as pure diffuse
         }
         else if (p["TYPE"] == "Emitting")
         {
@@ -58,6 +59,13 @@ void Scene::loadFromJSON(const std::string& jsonName)
         {
             const auto& col = p["RGB"];
             newMaterial.color = glm::vec3(col[0], col[1], col[2]);
+            newMaterial.hasReflective = 1.0f; // Deal as pure reflect
+        }
+        else if (p["TYPE"] == "Refract") // Add refract materials
+        {
+            const auto& col = p["RGB"];
+            newMaterial.color = glm::vec3(col[0], col[1], col[2]);
+            newMaterial.hasRefractive = p["REFRACT"];
         }
         MatNameToID[name] = materials.size();
         materials.emplace_back(newMaterial);
@@ -104,6 +112,9 @@ void Scene::loadFromJSON(const std::string& jsonName)
     camera.position = glm::vec3(pos[0], pos[1], pos[2]);
     camera.lookAt = glm::vec3(lookat[0], lookat[1], lookat[2]);
     camera.up = glm::vec3(up[0], up[1], up[2]);
+    // Add data in camera for Physically-based depth-of-field
+    camera.lensRadius = cameraData["RADIUS"];
+    camera.focalDistance = cameraData["FOCAL"];
 
     //calculate fov based on resolution
     float yscaled = tan(fovy * (PI / 180));
